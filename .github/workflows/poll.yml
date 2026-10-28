@@ -4,7 +4,7 @@ name: Poll scores
 
 on:
   schedule:
-    - cron: '*/5 * * * *'   # GitHub's fastest schedule. Runs can start a few minutes late.
+    - cron: '*/15 * * * *'   # GitHub's fastest schedule. Runs can start a few minutes late.
   workflow_dispatch: {}      # lets you press "Run workflow" by hand
 
 permissions:
@@ -47,7 +47,10 @@ jobs:
           OLD_EVERY: '1440'
           # Leagues to keep, "Country:League name", comma separated. Empty = all.
           # Example: England:Premier League,Spain:La Liga,Italy:Serie A
-          TOP_LEAGUES: ''
+          TOP_LEAGUES: 'England:Premier League,Spain:La Liga,Italy:Serie A,Germany:Bundesliga,France:Ligue 1,Netherlands:Eredivisie,World:UEFA Champions League,World:UEFA Europa League,England:FA Cup,England:League Cup,Spain:Copa del Rey,Italy:Coppa Italia,Germany:DFB Pokal,France:Coupe de France'
+          LIVE_EVERY: '15'
+          TODAY_EVERY: '60'
+          OTHER_EVERY: '720'
         run: node ghactions/run.mjs
 
       - name: Publish
