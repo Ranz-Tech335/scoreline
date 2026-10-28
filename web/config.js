@@ -16,5 +16,5 @@ window.SCORELINE = {
   pollSeconds: 20,
 
   // Countries listed first, in this order. Everything else follows A to Z.
-  topCountries: ['England', 'Spain', 'Italy', 'Germany', 'France', 'Netherlands', 'Portugal', 'World', 'Europe', 'Africa', 'Uganda'],
+  topCountries: ['England', 'Spain', 'Italy', 'Germany', 'France', 'Netherlands', 'Portugal', 'Uganda'],
 };
