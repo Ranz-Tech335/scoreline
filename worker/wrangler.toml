@@ -1,0 +1,40 @@
+name = "scoreline-api"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+[triggers]
+crons = ["* * * * *"]
+
+[[r2_buckets]]
+binding = "SCORES"
+bucket_name = "scoreline-scores"
+
+[vars]
+# Sports to poll. Remove any you have no provider subscription for.
+SPORTS = "football"
+# Upstream requests allowed per sport per UTC day. Match your provider plan
+# (API-Football free = 100, Pro = 7500).
+DAILY_BUDGET = "95"
+
+# How often to refresh, in minutes. These values fit the free plan's 100
+# requests/day. Simulated busy day (12 matches in 4 kick-off windows, 12:50 to
+# 21:30 UTC): about 75 requests, every match ends as finished. Live scores
+# update about every 10 minutes while a match is on.
+LIVE_EVERY = "10"
+TODAY_EVERY = "120"
+OTHER_EVERY = "720"
+OLD_EVERY = "1440"
+# On API-Football Pro ($19/month) use: DAILY_BUDGET "7000", LIVE_EVERY "1",
+# TODAY_EVERY "5", OTHER_EVERY "60".
+
+# Leagues to keep, as "Country:League name", comma separated. Empty = all.
+# Use the exact names from /leagues (see README, First tests). Example:
+# TOP_LEAGUES = "England:Premier League,Spain:La Liga,Italy:Serie A,Germany:Bundesliga,France:Ligue 1,Uganda:StarTimes Uganda Premier League"
+TOP_LEAGUES = ""
+# Lock this to your site once it is live, e.g. "https://scoreline.netlify.app".
+ALLOW_ORIGIN = "*"
+
+# Secrets (never put keys in this file):
+#   npx wrangler secret put APISPORTS_KEY
+# Optional per-sport keys: APISPORTS_KEY_FOOTBALL, APISPORTS_KEY_BASKETBALL,
+# APISPORTS_KEY_VOLLEYBALL

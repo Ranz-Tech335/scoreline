@@ -1,0 +1,61 @@
+# Fetches football scores every few minutes and publishes the site with
+# GitHub Pages. Edit the settings under "env:" to change leagues or limits.
+name: Poll scores
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # GitHub's fastest schedule. Runs can start a few minutes late.
+  workflow_dispatch: {}      # lets you press "Run workflow" by hand
+
+permissions:
+  contents: write
+
+concurrency:
+  group: poll-scores
+  cancel-in-progress: false
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Restore previous data
+        run: |
+          mkdir -p _site
+          if git ls-remote --exit-code --heads origin live >/dev/null 2>&1; then
+            git fetch --depth=1 origin live
+            git archive FETCH_HEAD | tar -x -C _site
+          fi
+
+      - name: Poll the sports API
+        env:
+          APISPORTS_KEY: ${{ secrets.APISPORTS_KEY }}
+          SPORTS: football
+          # Free plan (100 requests/day). For the $19 plan use:
+          # DAILY_BUDGET 7000, LIVE_EVERY 5, TODAY_EVERY 10, OTHER_EVERY 60
+          # (GitHub cannot run faster than every 5 minutes.)
+          DAILY_BUDGET: '95'
+          LIVE_EVERY: '10'
+          TODAY_EVERY: '120'
+          OTHER_EVERY: '720'
+          OLD_EVERY: '1440'
+          # Leagues to keep, "Country:League name", comma separated. Empty = all.
+          # Example: England:Premier League,Spain:La Liga,Italy:Serie A
+          TOP_LEAGUES: 'Uganda:Premier League,England:Premier League,Spain:La Liga,Italy:Serie A,Germany:Bundesliga,France:Ligue 1,Netherlands:Eredivisie,World:UEFA Champions League,World:UEFA Europa League'
+        run: node ghactions/run.mjs
+
+      - name: Publish
+        run: |
+          cd _site
+          git init -q -b live
+          git config user.name "scoreline-bot"
+          git config user.email "scoreline-bot@users.noreply.github.com"
+          git add -A
+          git commit -q -m "scores $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" live
