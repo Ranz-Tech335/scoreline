@@ -47,7 +47,7 @@ jobs:
           OLD_EVERY: '1440'
           # Leagues to keep, "Country:League name", comma separated. Empty = all.
           # Example: England:Premier League,Spain:La Liga,Italy:Serie A
-          TOP_LEAGUES: 'Uganda:Premier League,England:Premier League,Spain:La Liga,Italy:Serie A,Germany:Bundesliga,France:Ligue 1,Netherlands:Eredivisie,World:UEFA Champions League,World:UEFA Europa League'
+          TOP_LEAGUES: ''
         run: node ghactions/run.mjs
 
       - name: Publish
